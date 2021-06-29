@@ -18,11 +18,14 @@ let activitiesChecked = 0;
 
 const paypal = document.getElementById('paypal');
 const bitcoin = document.getElementById('bitcoin');
-const creditCard = document.getElementById('credit-card');
+const creditCardFields = document.getElementById('credit-card');
 
 const form = document.querySelector('form');
 const nameElement = document.getElementById('name');
 const email = document.getElementById('email')
+const creditCard = document.getElementById('cc-num');
+const zipCode = document.getElementById('zip');
+const cvv = document.getElementById('cvv');
 
 //When page load set cursor inside Name field
 document.getElementById('name').focus();
@@ -83,17 +86,17 @@ paymentType.addEventListener('change', (e) => {
     if (e.target.value === 'credit-card') {
         paypal.style.display = 'none';
         bitcoin.style.display = 'none';
-        creditCard.style.display = 'block';
+        creditCardFields.style.display = 'block';
     }
     if (e.target.value === 'paypal') {
         bitcoin.style.display = 'none';
         paypal.style.display = 'block';
-        creditCard.style.display = 'none';
+        creditCardFields.style.display = 'none';
     }
     if (e.target.value === 'bitcoin') {
         bitcoin.style.display = 'block';
         paypal.style.display = 'none';
-        creditCard.style.display = 'none';
+        creditCardFields.style.display = 'none';
     }
 });
 
@@ -104,6 +107,12 @@ form.addEventListener('submit', (e) => {
     validateName();
     validateEmail();
     validateActivities();
+
+    if (paymentTypeOptions[1].selected) {
+        validateCreditCardNumber();
+        validateZipCode();
+        validateCVV();
+    }
 });
 
 const validateName = () => {
@@ -121,4 +130,22 @@ const validateEmail = () => {
 const validateActivities = () => {
     const activitiesIsValid = activitiesChecked > 0;
     return activitiesIsValid;
+}
+
+const validateCreditCardNumber = () => {
+    const creditCardValue = creditCard.value;
+    const creditCardIsValid = /^[^@-\s]{13,16}$/.test(creditCardValue);
+    return creditCardIsValid;
+}
+
+const validateZipCode = () => {
+    const zipCodeValue = zipCode.value;
+    const zipCodeIsValid = /^[^@-]{5}$/.test(zipCodeValue);
+    return zipCodeIsValid;
+}
+
+const validateCVV = () => {
+    const cvvValue = cvv.value;
+    const cvvIsValid = /^[^@-]{3}$/.test(cvvValue);
+    return cvvIsValid;
 }
