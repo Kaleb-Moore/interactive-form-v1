@@ -7,6 +7,11 @@ const shirtColorOptions = document.querySelectorAll('#color option');
 const jobRoleDropDown = document.getElementById('title');
 const otherField = document.getElementById('other-job-role');
 
+const activities = document.getElementById('activities');
+const activitiesOptions = document.querySelectorAll('#activities-box label input')
+
+let cost = 0;
+
 //When page load set cursor inside Name field
 document.getElementById('name').focus();
 
@@ -41,3 +46,15 @@ shirtDesign.addEventListener('change', (e) => {
     }
 });
 
+activities.addEventListener('change', (e) => {
+    const checkedCost = parseInt(e.target.getAttribute('data-cost'));
+    let updatedCost = document.getElementById('activities-cost');
+
+    if (e.target.checked) {
+        cost += checkedCost;
+        updatedCost.innerHTML = `Total: $${cost}`;
+    } else {
+        cost -= checkedCost;
+        updatedCost.innerHTML = `Total: $${cost}`;
+    }
+});
