@@ -14,10 +14,15 @@ const paymentType = document.getElementById('payment');
 const paymentTypeOptions = document.querySelectorAll('#payment option');
 
 let totalActivitiesCost = 0;
+let activitiesChecked = 0;
 
 const paypal = document.getElementById('paypal');
 const bitcoin = document.getElementById('bitcoin');
 const creditCard = document.getElementById('credit-card');
+
+const form = document.querySelector('form');
+const nameElement = document.getElementById('name');
+const email = document.getElementById('email')
 
 //When page load set cursor inside Name field
 document.getElementById('name').focus();
@@ -68,6 +73,8 @@ activities.addEventListener('change', (e) => {
         totalActivitiesCost -= checkedCost;
         updatedCost.innerHTML = `Total: $${totalActivitiesCost}`;
     }
+
+    (e.target.checked) ? activitiesChecked ++ : activitiesChecked --;
 });
 
 //Toggle payment methods
@@ -89,3 +96,29 @@ paymentType.addEventListener('change', (e) => {
         creditCard.style.display = 'none';
     }
 });
+
+//When form submits, checks to make sure all fields are valid
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    console.log('sumbitting form')
+    validateName();
+    validateEmail();
+    validateActivities();
+});
+
+const validateName = () => {
+    const nameValue = nameElement.value;
+    const nameIsValid = /^[a-zA-Z]* ?[a-zA-Z]*?$/.test(nameValue);
+    return nameIsValid;
+}
+
+const validateEmail = () => {
+    const emailValue = email.value;
+    const emailIsValid = /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailValue);
+    return emailIsValid;
+}
+
+const validateActivities = () => {
+    const activitiesIsValid = activitiesChecked > 0;
+    return activitiesIsValid;
+}
