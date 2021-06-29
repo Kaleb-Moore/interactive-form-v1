@@ -13,16 +13,15 @@ const activitiesOptions = document.querySelectorAll('#activities-box label input
 const paymentType = document.getElementById('payment');
 const paymentTypeOptions = document.querySelectorAll('#payment option');
 
-let totalActivitiesCost = 0;
-let activitiesChecked = 0;
-
 const paypal = document.getElementById('paypal');
 const bitcoin = document.getElementById('bitcoin');
 const creditCardFields = document.getElementById('credit-card');
 
 const form = document.querySelector('form');
+
 const nameElement = document.getElementById('name');
 const email = document.getElementById('email')
+
 const creditCard = document.getElementById('cc-num');
 const zipCode = document.getElementById('zip');
 const cvv = document.getElementById('cvv');
@@ -36,6 +35,11 @@ otherField.hidden = true;
 paymentTypeOptions[1].selected = true;
 paypal.style.display = 'none';
 bitcoin.style.display = 'none';
+
+//counters for functions
+let totalActivitiesCost = 0;
+let activitiesChecked = 0;
+let validatorNum = 0;
 
 //If 'other' is selected then the text field will show
 jobRoleDropDown.addEventListener('change', (e) => {
@@ -102,50 +106,81 @@ paymentType.addEventListener('change', (e) => {
 
 //When form submits, checks to make sure all fields are valid
 form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    console.log('sumbitting form')
     validateName();
     validateEmail();
     validateActivities();
 
+    //Only trigger this validation if credit card is selected as payment type
     if (paymentTypeOptions[1].selected) {
         validateCreditCardNumber();
         validateZipCode();
         validateCVV();
+    } 
+
+    //Validate that all 6 fields are filled out properly (6 Fields - because credit card is selected)
+    if (paymentTypeOptions[1].selected && validatorNum < 6) {
+        e.preventDefault();
+        validatorNum = 0;
+    }
+    //Validate that both fields are filled out properly (2 Fields - because credit card is not selected)
+    if (paymentTypeOptions[2].selected && validatorNum < 2) {
+        e.preventDefault();
+        validatorNum = 0;
+    }
+    if (paymentTypeOptions[3].selected && validatorNum < 2) {
+        e.preventDefault();
+        validatorNum = 0;
     }
 });
 
+const validator = (valid) => {
+    if (valid) {
+        validatorNum++;
+    }
+    return validator;
+}
+
 const validateName = () => {
     const nameValue = nameElement.value;
-    const nameIsValid = /^[a-zA-Z]* ?[a-zA-Z]*?$/.test(nameValue);
-    return nameIsValid;
+    if (nameValue !== '') {
+        const nameIsValid = /^[a-zA-Z]*? ?[a-zA-Z]*?$/.test(nameValue);
+        validator(nameIsValid);
+        return nameIsValid;
+    } else {
+        return false;
+    }
 }
 
 const validateEmail = () => {
     const emailValue = email.value;
     const emailIsValid = /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailValue);
+    validator(emailIsValid);
     return emailIsValid;
 }
 
 const validateActivities = () => {
     const activitiesIsValid = activitiesChecked > 0;
+    validator(activitiesIsValid);
     return activitiesIsValid;
 }
 
 const validateCreditCardNumber = () => {
     const creditCardValue = creditCard.value;
     const creditCardIsValid = /^[^@-\s]{13,16}$/.test(creditCardValue);
+    validator(creditCardIsValid);
     return creditCardIsValid;
 }
 
 const validateZipCode = () => {
     const zipCodeValue = zipCode.value;
     const zipCodeIsValid = /^[^@-]{5}$/.test(zipCodeValue);
+    validator(zipCodeIsValid);
     return zipCodeIsValid;
 }
 
 const validateCVV = () => {
     const cvvValue = cvv.value;
     const cvvIsValid = /^[^@-]{3}$/.test(cvvValue);
+    validator(cvvIsValid);
     return cvvIsValid;
 }
