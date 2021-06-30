@@ -132,6 +132,7 @@ paymentType.addEventListener('change', (e) => {
     }
 });
 
+//Real time error loggin for the Name Field. Checks if name is blank or not to see which error message to display.
 nameElement.addEventListener('input', (e) => {
     validateName();
     const currentNameValue = e.target.value;
