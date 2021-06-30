@@ -78,7 +78,8 @@ shirtDesign.addEventListener('change', (e) => {
     }
 });
 
-//When a box is checked it adds the cost to the total at the bottom. It will update if activities are removed.
+//When a box is checked it adds the cost to the total at the bottom. 
+//It will update if activities are removed. Also disabled the activities if the time and date are conflicting
 activities.addEventListener('change', (e) => {
     const checkedCost = parseInt(e.target.getAttribute('data-cost'));
     let updatedCost = document.getElementById('activities-cost');
@@ -92,6 +93,23 @@ activities.addEventListener('change', (e) => {
     }
 
     (e.target.checked) ? activitiesChecked ++ : activitiesChecked --;
+
+    const clicked = e.target;
+    const clickedType = clicked.getAttribute('data-day-and-time');
+        
+    for (let i = 0; i < activitiesOptions.length; i++) {
+    const checkboxType = activitiesOptions[i].getAttribute('data-day-and-time');
+    
+        if (checkboxType === clickedType && clicked !== activitiesOptions[i]) {
+            if (clicked.checked) {
+            activitiesOptions[i].disabled = true;
+            activitiesOptions[i].parentElement.className = 'disabled';
+            } else {
+            activitiesOptions[i].disabled = false;
+            activitiesOptions[i].parentElement.classList.remove('disabled');
+            }
+        }
+    }
 });
 
 //Toggle payment methods
@@ -113,6 +131,21 @@ paymentType.addEventListener('change', (e) => {
         creditCardFields.style.display = 'none';
     }
 });
+
+nameElement.addEventListener('input', (e) => {
+    validateName();
+    const currentNameValue = e.target.value;
+
+    if(!validateName()) {
+        if (currentNameValue === '') {
+            nameElement.nextElementSibling.textContent = `Name field cannot be blank.`
+        } else {
+            nameElement.nextElementSibling.textContent = `You have entered ${currentNameValue}. Name field cannot contain symbols or numbers.`;
+        }
+    }
+
+});
+
 
 //When form submits, checks to make sure all fields are valid
 form.addEventListener('submit', (e) => {
@@ -212,4 +245,3 @@ const validateCVV = () => {
     validator(cvvIsValid, cvv);
     return cvvIsValid;
 }
-
