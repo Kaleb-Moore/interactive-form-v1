@@ -8,7 +8,7 @@ const jobRoleDropDown = document.getElementById('title');
 const otherField = document.getElementById('other-job-role');
 
 const activities = document.getElementById('activities');
-const activitiesOptions = document.querySelectorAll('#activities-box label input')
+const activitiesOptions = document.querySelectorAll("[type='checkbox']");
 
 const paymentType = document.getElementById('payment');
 const paymentTypeOptions = document.querySelectorAll('#payment option');
@@ -40,6 +40,16 @@ bitcoin.style.display = 'none';
 let totalActivitiesCost = 0;
 let activitiesChecked = 0;
 let validatorNum = 0;
+
+//loop for focus/blur on the activities
+for (let i = 0; i < activitiesOptions.length; i++) {
+    activitiesOptions[i].addEventListener('focus', () => {
+        activitiesOptions[i].parentElement.classList.add('focus');
+    });
+    activitiesOptions[i].addEventListener('blur', () => {
+        activitiesOptions[i].parentElement.classList.remove('focus');
+    });
+}
 
 //If 'other' is selected then the text field will show
 jobRoleDropDown.addEventListener('change', (e) => {
@@ -117,70 +127,89 @@ form.addEventListener('submit', (e) => {
         validateCVV();
     } 
 
-    //Validate that all 6 fields are filled out properly (6 Fields - because credit card is selected)
-    if (paymentTypeOptions[1].selected && validatorNum < 6) {
+    //Validate that all 7 fields are filled out properly (7 Fields - because credit card is selected)
+    if (paymentTypeOptions[1].selected && validatorNum < 7) {
         e.preventDefault();
         validatorNum = 0;
     }
-    //Validate that both fields are filled out properly (2 Fields - because credit card is not selected)
-    if (paymentTypeOptions[2].selected && validatorNum < 2) {
+
+    //Validate that both fields are filled out properly (3 Fields - because credit card is not selected)
+    if (paymentTypeOptions[2].selected && validatorNum < 3) {
         e.preventDefault();
         validatorNum = 0;
     }
-    if (paymentTypeOptions[3].selected && validatorNum < 2) {
+    if (paymentTypeOptions[3].selected && validatorNum < 3) {
         e.preventDefault();
         validatorNum = 0;
     }
 });
 
-const validator = (valid) => {
+//Parameters set for if a field was valid or not. Also adds to the counter for the form submit
+const validator = (valid, element) => {
     if (valid) {
         validatorNum++;
+        element.parentElement.classList.add('valid');
+        element.parentElement.classList.remove('not-valid');
+        element.parentElement.lastElementChild.style.display = 'none';
+    } else {
+        element.parentElement.classList.add('not-valid');
+        element.parentElement.classList.remove('valid');
+        element.parentElement.lastElementChild.style.display = 'block';
     }
     return validator;
 }
 
+//Validation code for all fields
 const validateName = () => {
-    const nameValue = nameElement.value;
-    if (nameValue !== '') {
-        const nameIsValid = /^[a-zA-Z]*? ?[a-zA-Z]*?$/.test(nameValue);
-        validator(nameIsValid);
-        return nameIsValid;
+    const nameValue = nameElement.value.trim();
+    const nameIsValid = /^[a-z ,.'-]+$/i.test(nameValue);
+    if (nameIsValid) {
+        validator(nameIsValid, nameElement);
     } else {
-        return false;
+        validator(nameIsValid, nameElement);
     }
 }
 
 const validateEmail = () => {
     const emailValue = email.value;
     const emailIsValid = /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailValue);
-    validator(emailIsValid);
+    validator(emailIsValid, email);
     return emailIsValid;
 }
 
 const validateActivities = () => {
     const activitiesIsValid = activitiesChecked > 0;
-    validator(activitiesIsValid);
+    if (activitiesIsValid) {
+        validatorNum++;
+        activities.firstChild.nextSibling.classList.add('valid');
+        activities.firstChild.nextSibling.classList.remove('not-valid');
+        activities.lastElementChild.style.display = 'none';
+    } else {
+        activities.firstChild.nextSibling.classList.add('not-valid');
+        activities.firstChild.nextSibling.classList.remove('valid');
+        activities.lastElementChild.style.display = 'block';
+    }
     return activitiesIsValid;
 }
 
 const validateCreditCardNumber = () => {
     const creditCardValue = creditCard.value;
     const creditCardIsValid = /^[^@-\s]{13,16}$/.test(creditCardValue);
-    validator(creditCardIsValid);
+    validator(creditCardIsValid, creditCard);
     return creditCardIsValid;
 }
 
 const validateZipCode = () => {
     const zipCodeValue = zipCode.value;
     const zipCodeIsValid = /^[^@-]{5}$/.test(zipCodeValue);
-    validator(zipCodeIsValid);
+    validator(zipCodeIsValid, zipCode);
     return zipCodeIsValid;
 }
 
 const validateCVV = () => {
     const cvvValue = cvv.value;
     const cvvIsValid = /^[^@-]{3}$/.test(cvvValue);
-    validator(cvvIsValid);
+    validator(cvvIsValid, cvv);
     return cvvIsValid;
 }
+
