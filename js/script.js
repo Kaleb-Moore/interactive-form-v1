@@ -30,6 +30,7 @@ const cvv = document.getElementById('cvv');
 document.getElementById('name').focus();
 
 //Set page defaults
+shirtDesignOptions[0].selected = true;
 shirtColor.setAttribute('disabled', true);
 otherField.hidden = true;
 paymentTypeOptions[1].selected = true;
@@ -72,8 +73,10 @@ shirtDesign.addEventListener('change', (e) => {
         const match = shirtColorOptions[i].getAttribute('data-theme');
         if (target !== match){
             shirtColorOptions[i].hidden = true;
+            shirtColorOptions[0].selected = true;
         } else {
             shirtColorOptions[i].hidden = false;
+            shirtColorOptions[0].selected =true;
         }
     }
 });
